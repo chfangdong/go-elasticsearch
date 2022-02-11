@@ -123,6 +123,10 @@ func (r MsearchRequest) Do(ctx context.Context, transport Transport) (*Response,
 		params["filter_path"] = strings.Join(r.FilterPath, ",")
 	}
 
+	if r.IgnoreUnavailable != nil {
+		params["ignore_unavailable"] = strconv.FormatBool(*r.IgnoreUnavailable)
+	}
+
 	req, _ := newRequest(method, path.String(), r.Body)
 
 	if len(params) > 0 {
