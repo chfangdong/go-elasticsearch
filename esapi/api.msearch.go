@@ -43,11 +43,11 @@ type MsearchRequest struct {
 	RestTotalHitsAsInt         *bool
 	SearchType                 string
 	TypedKeys                  *bool
-
-	Pretty     bool
-	Human      bool
-	ErrorTrace bool
-	FilterPath []string
+	IgnoreUnavailable          *bool
+	Pretty                     bool
+	Human                      bool
+	ErrorTrace                 bool
+	FilterPath                 []string
 
 	Header http.Header
 
@@ -289,5 +289,13 @@ func (f Msearch) WithHeader(h map[string]string) func(*MsearchRequest) {
 		for k, v := range h {
 			r.Header.Add(k, v)
 		}
+	}
+}
+
+// WithIgnoreUnavailable - whether specified concrete indices should be ignored when unavailable (missing or closed).
+//
+func (f Msearch) WithIgnoreUnavailable(v bool) func(*MsearchRequest) {
+	return func(r *MsearchRequest) {
+		r.IgnoreUnavailable = &v
 	}
 }
