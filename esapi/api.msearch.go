@@ -46,6 +46,7 @@ type MsearchRequest struct {
 	RestTotalHitsAsInt         *bool
 	SearchType                 string
 	TypedKeys                  *bool
+	IgnoreUnavailable          *bool
 
 	Pretty     bool
 	Human      bool
@@ -122,6 +123,10 @@ func (r MsearchRequest) Do(ctx context.Context, transport Transport) (*Response,
 		params["filter_path"] = strings.Join(r.FilterPath, ",")
 	}
 
+	if r.IgnoreUnavailable != nil {
+		params["ignore_unavailable"] = strconv.FormatBool(*r.IgnoreUnavailable)
+	}
+
 	req, err := newRequest(method, path.String(), r.Body)
 	if err != nil {
 		return nil, err
@@ -167,6 +172,14 @@ func (r MsearchRequest) Do(ctx context.Context, transport Transport) (*Response,
 	}
 
 	return &response, nil
+}
+
+// WithIgnoreUnavailable - whether specified concrete indices should be ignored when unavailable (missing or closed).
+//
+func (f Msearch) WithIgnoreUnavailable(v bool) func(*MsearchRequest) {
+	return func(r *MsearchRequest) {
+		r.IgnoreUnavailable = &v
+	}
 }
 
 // WithContext sets the request context.
